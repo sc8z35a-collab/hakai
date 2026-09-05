@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#edf0ee">
+  <title>FRACTURE — ビル破壊シミュレーター</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <main id="simulator" aria-label="3Dビル破壊シミュレーター">
+    <canvas id="world" aria-label="10階建てビルの3D空間"></canvas>
+    <div id="loading"><span class="loading-mark">F</span><p>BUILDING YOUR SANDBOX<span class="loading-dots">...</span></p><small id="loading-status">物理ワールドを構築しています</small></div>
+    <div class="vignette"></div>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="FRACTURE ホーム"><span class="brand-symbol"><svg viewBox="0 0 32 32" fill="none"><path d="M7 25V7h18M7 15h14M15 15v10" stroke="currentColor" stroke-width="3"/><path d="m24 19-5 8h7" stroke="currentColor" stroke-width="2"/></svg></span><span>FRACTURE<i>DESTRUCTION SANDBOX</i></span><span class="version">01.0</span></a>
+      <div class="session-label"><span class="live-dot"></span> PHYSICS LIVE <span class="separator">/</span> EXPERIMENT 001</div>
+      <nav class="header-actions" aria-label="設定"><button id="sound-btn" class="icon-btn" title="音を切り替え" aria-label="音を切り替え" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5V4ZM16 9l5 6m0-6-5 6"/></svg></button><button id="fullscreen-btn" class="icon-btn" title="全画面" aria-label="全画面"><svg viewBox="0 0 24 24"><path d="M9 3H3v6m12-6h6v6M3 15v6h6m12-6v6h-6"/></svg></button><button id="help-btn" class="icon-btn help-btn" aria-label="操作ガイド">?</button></nav>
+    </header>
+    <aside class="project-panel">
+      <div class="eyebrow"><span class="small-square"></span> THE STRUCTURAL PLAYGROUND</div>
+      <h1>BREAK.<br>OBSERVE.<br><span>REPEAT.</span></h1>
+      <p class="intro">つくり込まれた空間を、壊す。<br>物理法則に、あとは任せよう。</p>
+      <div class="project-info"><span class="section-index">01 / TEST SUBJECT</span><h2>THE GLASSHOUSE<span>グラスハウス</span></h2><div class="building-spec"><span>10 <small>FLOORS</small></span><span>43 <small>METERS</small></span><span>RC <small>FRAME</small></span></div></div>
+      <button class="text-btn" id="interior-btn">内装を探索する <span>↗</span></button>
+    </aside>
+    <aside class="telemetry" aria-label="シミュレーション状態">
+      <div class="panel-heading"><span class="live-dot"></span> STRUCTURAL MONITOR <span>↗</span></div>
+      <div class="integrity-title"><span>構造健全度</span><strong id="integrity-value">100<span>%</span></strong></div>
+      <div class="integrity-track"><div id="integrity-bar"></div></div>
+      <div class="structure-floor-bars" id="floor-bars" aria-label="各階の状態"></div>
+      <dl><div><dt>構造状態</dt><dd id="structure-state">STABLE</dd></div><div><dt>アクティブ破片</dt><dd id="debris-count">0000</dd></div><div><dt>設置済み爆薬</dt><dd><span id="charge-count">00</span> <span class="unit">CHARGES</span></dd></div></dl>
+      <div class="monitor-foot">RIGID BODY ENGINE <span id="fps">60 FPS</span></div>
+    </aside>
+    <div class="crosshair" id="crosshair"><span></span><i></i><b></b></div>
+    <div class="target-readout" id="target-readout">GLASSHOUSE <span>43.0 M</span></div>
+    <div id="toast" role="status"></div>
+    <div class="view-controls"><button id="exterior-btn" class="view-btn active" title="外観に戻る">↗ <span>外観</span></button><button id="next-floor-btn" class="view-btn" title="内装へ移動 / 次の階（F）">▤ <span>階移動</span></button><button id="collision-btn" class="view-btn" aria-pressed="false"><span class="status-dot"></span> 当たり判定 <b id="collision-label">OFF</b></button><button id="slow-btn" class="view-btn" aria-pressed="false">◷ <span id="speed-label">1.0×</span></button><button id="pause-btn" class="view-btn" aria-label="一時停止" aria-pressed="false">Ⅱ</button><button id="reset-btn" class="view-btn reset-btn">↺ <span>リセット</span></button></div>
+    <div class="flight-status"><span class="flight-icon">✣</span> FREE FLIGHT <span class="flight-divider"></span><span>ALT <b id="altitude">34.0</b> m</span><span class="flight-divider"></span><span id="location-label">EXTERIOR</span></div>
+    <section class="arsenal" aria-label="装備選択">
+      <div class="arsenal-title"><span>LOADOUT</span><small>装備を選択</small></div>
+      <div class="weapon-options" role="group" aria-label="武器"><button class="weapon active" data-weapon="0" aria-pressed="true"><span class="weapon-key">1</span><svg viewBox="0 0 52 32"><rect x="13" y="9" width="26" height="17" rx="2"/><path d="M19 9V5h14v4M20 13v9m6-9v9m6-9v9M36 7l5-5"/></svg><span>C4 <small>リモート</small></span></button><button class="weapon" data-weapon="1" aria-pressed="false"><span class="weapon-key">2</span><svg viewBox="0 0 52 32"><path d="M13 8h26v18H13zM17 4h18v4M19 12v10m7-10v10m7-10v10M24 4V1"/><path d="M10 12H7v11h3m32-11h3v11h-3"/></svg><span>BREACH <small>高威力</small></span></button><button class="weapon" data-weapon="2" aria-pressed="false"><span class="weapon-key">3</span><svg viewBox="0 0 52 32"><path d="m26 2 14 8v16H12V10L26 2ZM12 14h28M20 14v12m12-12v12M22 8h8"/></svg><span>SEISMIC <small>広範囲</small></span></button><button class="weapon" data-weapon="3" aria-pressed="false"><span class="weapon-key">4</span><svg viewBox="0 0 52 32"><path d="m17 5-7 11 7 11h18l7-11-7-11H17Z"/><circle cx="26" cy="16" r="7"/><path d="M26 9v14m-7-7h14"/></svg><span>CATACLYSM <small>最大威力</small></span></button><button class="weapon" data-weapon="4" aria-pressed="false"><span class="weapon-key">5</span><svg viewBox="0 0 52 32"><path d="m38 3-1 13-14 12-8-8L27 6l11-3ZM26 8l9 9M20 15l-9-1-6 6 10 1m10 3 1 6 7-6-1-7M12 25l-5 5m9-2-3 3"/></svg><span>MISSILE <small>直撃弾</small></span></button></div>
+      <div class="primary-actions"><button id="place-btn"><span id="place-label">＋ 設置する</span><kbd id="place-key">SPACE</kbd></button><button id="detonate-btn"><svg viewBox="0 0 24 24"><path d="m13 2-8 12h6l-1 8 9-13h-7l1-7Z"/></svg><span>起爆</span><kbd>G</kbd></button></div>
+    </section>
+    <footer class="bottom-hints"><span><kbd>W A S D</kbd> 移動 <i>·</i> <kbd>Q / E</kbd> 下降 / 上昇 <i>·</i> ドラッグで視点移動 <i>·</i> <kbd>SHIFT</kbd> 加速</span><span>DEBRIS LIFETIME <b>5 SEC</b><span class="footer-dot"></span> LOCAL SIMULATION</span></footer>
+    <div class="touch-controls" id="touch-controls"><div class="joystick" id="move-stick" aria-label="移動ジョイスティック"><div class="joystick-cross"></div><div class="joystick-knob" id="stick-knob"></div><small>MOVE</small></div><div class="vertical-controls"><button id="fly-up" aria-label="上昇">↑</button><span>FLY</span><button id="fly-down" aria-label="下降">↓</button></div><div class="look-hint">右側をスワイプして視点移動</div></div>
+    <div class="portrait-notice" id="portrait-notice"><svg viewBox="0 0 64 64"><rect x="17" y="6" width="30" height="52" rx="5"/><path d="M7 22 3 32l10-2m44 12 4-10-10 2"/></svg><h2>LANDSCAPE IS BETTER.</h2><p>スマホを横向きにして、<br>破壊の全景を楽しもう。</p><button id="portrait-dismiss">このまま続ける →</button></div>
+  </main>
+  <dialog id="help-dialog"><button class="dialog-close" id="close-help" aria-label="閉じる">×</button><span class="section-index">FIELD MANUAL / 01</span><h2>ようこそ、破壊実験室へ。</h2><p>10階すべてに内装を備えた、自由飛行の物理サンドボックス。正解も制限時間もありません。</p><div class="help-grid"><article><b>01 — 移動する</b><p>PC：WASDで移動、Q / Eで下降・上昇。ドラッグで視点を変え、Shiftで加速します。スマホ：左スティックで移動、右側をスワイプで視点移動、↑↓で高度調整。</p></article><article><b>02 — 設置して起爆する</b><p>装備を選び、照準をビルに合わせて「設置する」またはSpace。「起爆」またはGで設置したすべての爆薬を起爆。ミサイルは「発射する」で即発射します。</p></article><article><b>03 — 中へ入る</b><p>当たり判定OFFなら壁を通り抜けて探索可能。ONでビルと瓦礫に衝突します。「内装を探索する」で各階へ移動します（再クリックで次の階）。</p></article><article><b>04 — 崩壊を観察する</b><p>支柱が失われると、その上の階が剛体として落下・傾斜。ガラス・床・家具は爆風で破損します。0.2×でスロー観察。すべての飛散破片はシミュレーション時間で5秒後に消えます。</p></article></div><div class="help-note">Cannon-es 剛体物理 / ゲーム向けの支持・損傷モデル。有限要素法による建築構造解析ではありません。音は初期状態でOFF。データ送信・保存は行いません。</div><button id="start-btn" class="solid-button">実験をはじめる <span>↗</span></button></dialog>
+  <dialog id="reset-dialog"><span class="section-index">NEW EXPERIMENT</span><h2>ビルを再構築しますか？</h2><p>現在の破壊と設置した爆薬をリセットします。</p><div class="dialog-actions"><button id="cancel-reset">キャンセル</button><button id="confirm-reset" class="solid-button">再構築する ↺</button></div></dialog>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
